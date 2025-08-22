@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Jobs-Cacoal - Encontre as melhores vagas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #eef1ff;
+            --secondary: #3f37c9;
+            --danger: #ef476f;
+            --danger-hover: #d64062;
+            --success: #06d6a0;
+            --success-hover: #05c091;
+            --warning: #ffd166;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 14px;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background-color: white;
+            padding: 30px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .companies {
+            flex: 1;
+            padding: 60px 0;
+            background-color: var(--primary-light);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 28px;
+            color: var(--dark);
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+            margin: 15px auto 0;
+        }
+
+        .companies-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .company-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--gray-light);
+            margin-bottom: 30px;
+        }
+
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .company-header {
+            padding: 30px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .company-logo {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .company-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .company-body {
+            padding: 30px;
+        }
+
+        .company-info {
+            margin-bottom: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 6px;
+            border: 1px solid var(--gray-light);
+        }
+
+        .info-item i {
+            color: var(--primary);
+            font-size: 16px;
+            min-width: 20px;
+            text-align: center;
+            margin-top: 3px;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--gray);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            word-break: break-word;
+            color: var(--dark);
+        }
+
+        .company-jobs {
+            border-top: 1px solid var(--gray-light);
+            padding-top: 30px;
+        }
+
+        .jobs-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark);
+        }
+
+        .jobs-title i {
+            color: var(--primary);
+        }
+
+        .job-item {
+            background-color: var(--light);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .job-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .job-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .job-desc {
+            color: var(--gray);
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .job-salary {
+            font-weight: 600;
+            color: var(--success);
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .no-jobs {
+            color: var(--gray);
+            font-style: italic;
+            text-align: center;
+            padding: 30px;
+            background-color: var(--light);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .view-company-jobs {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .pagination-info {
+            font-weight: 500;
+            color: var(--gray);
+            padding: 12px 16px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray-light);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray-light);
+        }
+
+        .loading i {
+            font-size: 40px;
+            margin-bottom: 20px;
+            animation: spin 1s linear infinite;
+            color: var(--primary);
+        }
+
+        .loading h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray-light);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--gray-light);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray-light);
+        }
+
+        .error-state i {
+            font-size: 48px;
+            color: var(--danger);
+            margin-bottom: 20px;
+        }
+
+        .error-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .error-state p {
+            color: var(--gray);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .cta {
+            padding: 80px 0;
+            text-align: center;
+            background-color: white;
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .cta p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: var(--gray);
+        }
+
+        .footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .footer-content h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .footer-content p {
+            color: #adb5bd;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #343a40;
+            color: #adb5bd;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: white;
+                padding: 20px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                border-top: 1px solid var(--gray-light);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .pagination-controls {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .company-header {
+                padding: 20px;
+            }
+
+            .company-body {
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container navbar-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-briefcase"></i>
+            Jobs-Cacoal
+        </a>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="login.html" class="btn btn-outline">
+                <i class="fas fa-sign-in-alt"></i> Login - Empresa
+            </a>
+            <a href="register.html" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Cadastrar - Empresa
+            </a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Encontre as melhores oportunidades de emprego em Cacoal</h1>
+            <p>Conectamos profissionais talentosos com as melhores empresas da região.</p>
+        </div>
+    </div>
+</section>
+
+<section class="search-section">
+    <div class="container">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Buscar por cargo, empresa ou palavra-chave..." id="searchInput">
+            <button class="btn btn-primary" id="searchBtn">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="companies">
+    <div class="container">
+        <h2 class="section-title">Empresas e Vagas Disponíveis</h2>
+        <div class="companies-container">
+            <div id="companiesContainer"></div>
+            <div id="paginationControls" class="pagination-controls"></div>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Está contratando?</h2>
+            <p>Cadastre sua empresa e publique vagas para encontrar os melhores talentos para o seu negócio.</p>
+            <a href="register.html" class="btn btn-primary">
+                <i class="fas fa-building"></i> Cadastrar Empresa
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <h3>Jobs-Cacoal</h3>
+            <p>Conectando profissionais e empresas em Cacoal.</p>
+        </div>
+        <div class="footer-bottom">
+            <p>© <span id="currentYear">2025</span> Jobs-Cacoal. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    class JobsApp {
+        constructor() {
+            this.currentPage = 0;
+            this.currentQuery = '';
+            this.isLoading = false;
+            this.pageInfo = null;
+            this.searchTimeout = null;
+
+            this.init();
+        }
+
+        init() {
+            this.setupEventListeners();
+            this.setCurrentYear();
+            this.loadCompanies();
+        }
+
+        setupEventListeners() {
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                const navLinks = document.getElementById('navLinks');
+                const isActive = navLinks.classList.toggle('active');
+                const icon = document.querySelector('#mobileMenuBtn i');
+                icon.className = isActive ? 'fas fa-times' : 'fas fa-bars';
+            });
+
+            const searchBtn = document.getElementById('searchBtn');
+            const searchInput = document.getElementById('searchInput');
+
+            searchBtn.addEventListener('click', () => this.handleSearch());
+
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.handleSearch();
+                }
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    if (e.target.value.length >= 3 || e.target.value.length === 0) {
+                        this.handleSearch();
+                    }
+                }, 500);
+            });
+        }
+
+        setCurrentYear() {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+        }
+
+        async handleSearch() {
+            const searchInput = document.getElementById('searchInput');
+            this.currentQuery = searchInput.value.trim();
+            this.currentPage = 0;
+            await this.loadCompanies();
+        }
+
+        async loadCompanies() {
+            if (this.isLoading) return;
+
+            this.isLoading = true;
+            this.showLoading();
+
+            try {
+                const url = this.buildApiUrl();
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                this.pageInfo = data;
+
+                this.renderCompanies(data.content || []);
+                this.renderPagination();
+
+            } catch (error) {
+                console.error('Erro ao carregar empresas:', error);
+                this.showError('Erro ao carregar as empresas. Tente novamente.');
+            } finally {
+                this.isLoading = false;
+            }
+        }
+
+        buildApiUrl() {
+            const baseUrl = 'jobs/home/';
+            const params = new URLSearchParams({
+                page: this.currentPage,
+                size: 1
+            });
+
+            if (this.currentQuery) {
+                params.append('query', this.currentQuery);
+            }
+
+            return `${baseUrl}?${params.toString()}`;
+        }
+
+        showLoading() {
+            const container = document.getElementById('companiesContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <h3>Carregando Informações</h3>
+                    <p>Buscando empresas e vagas...</p>
+                </div>
+            `;
+        }
+
+        showError(message) {
+            const container = document.getElementById('companiesContainer');
+            container.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Erro ao Carregar</h3>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="jobsApp.loadCompanies()">
+                        <i class="fas fa-redo"></i> Tentar Novamente
+                    </button>
+                </div>
+            `;
+        }
+
+        renderCompanies(companies) {
+            const container = document.getElementById('companiesContainer');
+
+            if (companies.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Nenhuma Empresa Encontrada</h3>
+                        <p>Nenhuma empresa encontrada${this.currentQuery ? ` para "${this.currentQuery}"` : ''}.</p>
+                        ${this.currentQuery ? `
+                            <button class="btn btn-outline" onclick="jobsApp.clearSearch()">
+                                <i class="fas fa-times"></i> Limpar Busca
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            companies.forEach(empresa => {
+                const empresaDiv = document.createElement("div");
+                empresaDiv.className = "company-card";
+
+                let vagasToShow = [];
+                let totalVagas = 0;
+
+                if (empresa.vagas && empresa.vagas.length > 0) {
+                    totalVagas = empresa.vagas.length;
+                    vagasToShow = empresa.vagas.slice(0, 1);
+                }
+
+                let vagasHTML = "";
+                if (vagasToShow.length > 0) {
+                    vagasHTML = vagasToShow.map(vaga => `
+                        <div class="job-item">
+                            <h4 class="job-title">${vaga.titulo || 'Título não informado'}</h4>
+                            <p class="job-desc">${vaga.descricao || 'Sem descrição disponível'}</p>
+                            ${vaga.valor ? `<p class="job-salary">R$ ${vaga.valor.toFixed(2).replace('.', ',')}</p>` : ''}
+                        </div>
+                    `).join("");
+
+                    if (totalVagas > 1) {
+                        vagasHTML += `
+                            <div class="view-company-jobs">
+                                <button class="btn btn-outline" onclick="jobsApp.viewCompanyDetails('${empresa.email}')">
+                                    <i class="fas fa-eye"></i> Ver todas as vagas
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    vagasHTML = `<div class="no-jobs">Nenhuma vaga disponível nesta empresa.</div>`;
+                }
+
+                const companyInitial = empresa.name ? empresa.name.charAt(0).toUpperCase() : 'E';
+
+                empresaDiv.innerHTML = `
+                    <div class="company-header">
+                        <div class="company-logo">
+                            ${companyInitial}
+                        </div>
+                        <h3 class="company-name">${empresa.name || 'Nome não informado'}</h3>
+                    </div>
+
+                    <div class="company-body">
+                        <div class="company-info">
+                            <div class="info-grid">
+                                ${empresa.email ? `
+                                    <div class="info-item">
+                                        <i class="fas fa-envelope"></i>
+                                        <div class="info-content">
+                                            <span class="info-label">Email</span>
+                                            <span class="info-value">${empresa.email}</span>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                ${empresa.phoneNumber ? `
+                                    <div class="info-item">
+                                        <i class="fas fa-phone"></i>
+                                        <div class="info-content">
+                                            <span class="info-label">Telefone</span>
+                                            <span class="info-value">${empresa.phoneNumber}</span>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                ${empresa.address ? `
+                                    <div class="info-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <div class="info-content">
+                                            <span class="info-label">Endereço</span>
+                                            <span class="info-value">${empresa.address}</span>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                ${empresa.cnpj ? `
+                                    <div class="info-item">
+                                        <i class="fas fa-id-card"></i>
+                                        <div class="info-content">
+                                            <span class="info-label">CNPJ</span>
+                                            <span class="info-value">${empresa.cnpj}</span>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="company-jobs">
+                            <h3 class="jobs-title">
+                                <i class="fas fa-list"></i> Vagas Disponíveis: ${totalVagas}
+                            </h3>
+                            ${vagasHTML}
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(empresaDiv);
+            });
+        }
+
+        renderPagination() {
+            const paginationContainer = document.getElementById('paginationControls');
+
+            if (!this.pageInfo) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            const { number: currentPage, totalPages, totalElements, first, last } = this.pageInfo;
+
+            paginationContainer.innerHTML = `
+                <button class="btn btn-outline"
+                        onclick="jobsApp.previousPage()"
+                        ${first ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i> Anterior
+                </button>
+
+                <div class="pagination-info">
+                    Página ${currentPage + 1} de ${totalPages}
+                    (${totalElements} empresa${totalElements !== 1 ? 's' : ''})
+                </div>
+
+                <button class="btn btn-outline"
+                        onclick="jobsApp.nextPage()"
+                        ${last ? 'disabled' : ''}>
+                    Próxima <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+        }
+
+        async previousPage() {
+            if (this.currentPage > 0) {
+                this.currentPage--;
+                await this.loadCompanies();
+            }
+        }
+
+        async nextPage() {
+            if (this.pageInfo && !this.pageInfo.last) {
+                this.currentPage++;
+                await this.loadCompanies();
+            }
+        }
+
+        clearSearch() {
+            document.getElementById('searchInput').value = '';
+            this.currentQuery = '';
+            this.currentPage = 0;
+            this.loadCompanies();
+        }
+
+        async viewCompanyDetails(companyEmail) {
+            if (!companyEmail) {
+                alert('Email da empresa não encontrado.');
+                return;
+            }
+
+            try {
+                const encodedEmail = encodeURIComponent(companyEmail);
+
+                window.location.href = `alljobs.html?email=${companyEmail}`;
+
+            } catch (error) {
+                console.error('Erro ao redirecionar para detalhes da empresa:', error);
+                alert('Erro ao carregar os detalhes da empresa. Tente novamente.');
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.jobsApp = new JobsApp();
+    });
+</script>
+
+</body>
+</html>

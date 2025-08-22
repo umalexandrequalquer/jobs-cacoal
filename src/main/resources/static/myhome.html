@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Empresa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --danger: #ef476f;
+            --danger-hover: #d64062;
+            --success: #06d6a0;
+            --success-hover: #05c091;
+            --warning: #ffd166;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        header .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 14px;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: #f0f0ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-hover);
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .page-title {
+            margin-bottom: 20px;
+            color: var(--dark);
+            font-weight: 600;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+        }
+
+        .vaga {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .vaga:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .vaga-info {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .vaga-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0 0 8px 0;
+        }
+
+        .vaga-desc {
+            color: var(--gray);
+            margin: 0 0 12px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 100%;
+            overflow-wrap: break-word;
+        }
+
+        .vaga-salary {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 16px;
+        }
+
+        .vaga-actions {
+            display: flex;
+            gap: 10px;
+            align-self: flex-end;
+            margin-top: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .badge-success {
+            background-color: rgba(6, 214, 160, 0.1);
+            color: var(--success);
+        }
+
+        #mensagem {
+            text-align: center;
+            font-weight: 600;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .mensagem-show {
+            opacity: 1 !important;
+        }
+
+        .mensagem-success {
+            background-color: rgba(6, 214, 160, 0.1);
+            color: var(--success);
+        }
+
+        .mensagem-error {
+            background-color: rgba(239, 71, 111, 0.1);
+            color: var(--danger);
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .modal h3 {
+            color: var(--gray);
+            font-weight: 400;
+            font-size: 14px;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .modal-actions {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .loading i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            header .actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .vaga {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .vaga-actions {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 id="nomeEmpresa"><i class="fas fa-building"></i> Carregando...</h1>
+    <div class="actions">
+        <button class="btn btn-primary" onclick="abrirModal('criarVagaModal')">
+            <i class="fas fa-plus-circle"></i> Criar Vaga
+        </button>
+        <button class="btn btn-primary" onclick="abrirModal('configModal')">
+            <i class="fas fa-cog"></i> Configurar
+        </button>
+        <button class="btn btn-primary" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Sair
+        </button>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="page-title">Minhas Vagas</h2>
+    <div id="vagasContainer" class="loading">
+        <i class="fas fa-spinner"></i> Carregando informações...
+    </div>
+</div>
+
+<div id="mensagem"></div>
+
+<div id="configModal" class="modal">
+    <div class="modal-content">
+        <h2><i class="fas fa-building"></i> Editar Empresa</h2>
+        <h3>Obs: Preencher somente o que for alterar!</h3>
+
+        <div class="form-group">
+            <label>Nome:</label>
+            <input id="empresaNome" class="form-control" type="text" placeholder="">
+        </div>
+
+        <div class="form-group">
+            <label>CNPJ:</label>
+            <input id="empresaCnpj" class="form-control" type="text" placeholder="">
+        </div>
+
+        <div class="form-group">
+            <label>Email:</label>
+            <input id="empresaEmail" class="form-control" type="email" placeholder="">
+        </div>
+
+        <div class="form-group">
+            <label>Senha:</label>
+            <input id="empresaPassword" class="form-control" type="password">
+        </div>
+
+        <div class="form-group">
+            <label>Telefone:</label>
+            <input id="empresaPhone" class="form-control" type="text" placeholder="">
+        </div>
+
+        <div class="form-group">
+            <label>Endereço:</label>
+            <input id="empresaAddress" class="form-control" type="text" placeholder="">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="putUpdateCompany()">
+                <i class="fas fa-save"></i> Salvar
+            </button>
+            <button class="btn btn-danger" onclick="fecharModal('configModal')">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="editVagaModal" class="modal">
+    <div class="modal-content">
+        <h2><i class="fas fa-edit"></i> Editar Vaga</h2>
+
+        <div class="form-group">
+            <label>Título:</label>
+            <input id="vagaTitulo" class="form-control" type="text" placeholder="Título da vaga">
+        </div>
+
+        <div class="form-group">
+            <label>Descrição:</label>
+            <textarea id="vagaDescricao" class="form-control" rows="4" placeholder="Descrição da vaga (entre 10 e 500 caracteres)"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Salário (R$):</label>
+            <input id="vagaSalario" class="form-control" type="number" min="1518.00" step="0.01" placeholder="Valor mínimo: R$ 1.518,00">
+        </div>
+
+        <input type="hidden" id="vagaId">
+
+        <div class="modal-actions">
+            <button class="btn btn-success" onclick="editarVaga()">
+                <i class="fas fa-check"></i> Atualizar
+            </button>
+            <button class="btn btn-danger" onclick="fecharModal('editVagaModal')">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="criarVagaModal" class="modal">
+    <div class="modal-content">
+        <h2><i class="fas fa-plus-circle"></i> Criar Nova Vaga</h2>
+
+        <div class="form-group">
+            <label>Título:</label>
+            <input id="novaVagaTitulo" class="form-control" type="text" placeholder="Título da vaga">
+        </div>
+
+        <div class="form-group">
+            <label>Descrição:</label>
+            <textarea id="novaVagaDescricao" class="form-control" rows="4" placeholder="Descrição da vaga (entre 10 e 500 caracteres)"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Salário (R$):</label>
+            <input id="novaVagaSalario" class="form-control" type="number" min="1518.00" step="0.01" placeholder="Valor mínimo: R$ 1.518,00">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-success" onclick="criarVaga()">
+                <i class="fas fa-plus"></i> Criar Vaga
+            </button>
+            <button class="btn btn-danger" onclick="fecharModal('criarVagaModal')">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const token = localStorage.getItem("token");
+    const expiresIn = localStorage.getItem("expiresIn")
+
+
+
+    if (token == null)  {
+        window.location.href = "login.html";
+    }
+
+    function parseJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    }
+
+    const payload = parseJwt(token);
+    const empresaId = payload.sub;
+
+    let dadosEmpresa = {};
+
+
+    function mostrarMensagem(texto, tipo) {
+        const mensagemEl = document.getElementById("mensagem");
+        mensagemEl.textContent = texto;
+        mensagemEl.className = tipo === 'success' ? 'mensagem-success' : 'mensagem-error';
+        mensagemEl.classList.add('mensagem-show');
+
+        setTimeout(() => {
+            mensagemEl.classList.remove('mensagem-show');
+        }, 3000);
+    }
+
+
+    async function GetCompany() {
+        try {
+            const response = await fetch(`/api/company/find/${empresaId}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) throw new Error("Erro ao buscar empresa");
+
+            const empresa = await response.json();
+
+            dadosEmpresa = empresa;
+
+            document.getElementById("nomeEmpresa").innerHTML = `<i class="fas fa-building"></i> ${empresa.name}`;
+
+            const vagasContainer = document.getElementById("vagasContainer");
+            vagasContainer.innerHTML = "";
+
+            if (!empresa.vagas || empresa.vagas.length === 0) {
+                vagasContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-briefcase"></i>
+                        <p>Nenhuma vaga cadastrada ainda.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            empresa.vagas.forEach(vaga => {
+                const div = document.createElement("div");
+                div.className = "vaga";
+                div.innerHTML = `
+                    <div class="vaga-info">
+                        <h3 class="vaga-title">${vaga.titulo}</h3>
+                        <p class="vaga-desc">${vaga.descricao}</p>
+                        <p class="vaga-salary">
+                            <span class="badge badge-success">Salário</span>
+                            R$ ${vaga.valor.toFixed(2).replace('.', ',')}
+                        </p>
+                    </div>
+                    <div class="vaga-actions">
+                        <button class="btn btn-success" onclick="abrirEditarVaga('${vaga.id}', '${vaga.titulo}', '${vaga.descricao}', ${vaga.valor},'${empresaId}')">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn btn-danger" onclick="deletarVaga('${empresaId}', '${vaga.id}')">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </div>
+                `;
+                vagasContainer.appendChild(div);
+            });
+
+        } catch (error) {
+            console.error("Erro:", error);
+            const vagasContainer = document.getElementById("vagasContainer");
+            vagasContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Erro ao carregar dados da empresa.</p>
+                </div>
+            `;
+        }
+    }
+
+
+
+    function abrirModal(modalId) {
+        if (modalId === 'configModal') {
+            document.getElementById("empresaNome").value = '';
+            document.getElementById("empresaNome").placeholder = dadosEmpresa.name || '';
+            document.getElementById("empresaCnpj").value = '';
+            document.getElementById("empresaCnpj").placeholder = dadosEmpresa.cnpj || '';
+            document.getElementById("empresaEmail").value = '';
+            document.getElementById("empresaEmail").placeholder = dadosEmpresa.email || '';
+            document.getElementById("empresaPassword").value = '';
+            document.getElementById("empresaPhone").value = '';
+            document.getElementById("empresaPhone").placeholder = dadosEmpresa.phoneNumber || '';
+            document.getElementById("empresaAddress").value = '';
+            document.getElementById("empresaAddress").placeholder = dadosEmpresa.address || '';
+        } else if (modalId === 'criarVagaModal') {
+            document.getElementById("novaVagaTitulo").value = '';
+            document.getElementById("novaVagaDescricao").value = '';
+            document.getElementById("novaVagaSalario").value = '';
+        }
+        document.getElementById(modalId).style.display = "flex";
+    }
+
+    function fecharModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    function abrirEditarVaga(id, titulo, descricao, valor) {
+        document.getElementById("vagaId").value = id;
+        document.getElementById("vagaTitulo").value = titulo;
+        document.getElementById("vagaDescricao").value = descricao;
+        document.getElementById("vagaSalario").value = valor;
+        abrirModal('editVagaModal');
+    }
+
+    async function criarVaga() {
+        const titulo = document.getElementById("novaVagaTitulo").value;
+        const descricao = document.getElementById("novaVagaDescricao").value;
+        const salario = parseFloat(document.getElementById("novaVagaSalario").value);
+
+        if (!titulo) {
+            alert("O título é obrigatório!");
+            return;
+        }
+
+        if (descricao.length < 10 && descricao.length > 500) {
+            alert("A descrição deve ter entre 10 e 500 caracteres!");
+            return;
+        }
+
+        if (!salario || salario < 1518.00) {
+            alert("O salário deve ser maior ou igual a R$ 1.518,00!");
+            return;
+        }
+
+        const body = {
+            titulo: titulo,
+            descricao: descricao,
+            valor: salario
+        };
+
+        try {
+            const response = await fetch(`/api/jobs/${empresaId}/vagas`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                fecharModal('criarVagaModal');
+                mostrarMensagem("Vaga criada com sucesso!", "success");
+                GetCompany();
+            } else {
+                throw new Error("Erro ao criar vaga");
+            }
+        } catch (error) {
+            console.error("Erro:", error);
+            mostrarMensagem("Erro ao criar vaga.", "error");
+        }
+    }
+
+    async function editarVaga() {
+        const vagaId = document.getElementById("vagaId").value;
+        const titulo = document.getElementById("vagaTitulo").value;
+        const descricao = document.getElementById("vagaDescricao").value;
+        const salario = parseFloat(document.getElementById("vagaSalario").value);
+
+
+        if (!titulo) {
+            alert("O título é obrigatório!");
+            return;
+        }
+
+        if (!descricao || descricao.length < 10 || descricao.length > 500) {
+            alert("A descrição deve ter entre 10 e 500 caracteres!");
+            return;
+        }
+
+        if (!salario || salario < 1518.00) {
+            alert("O salário deve ser maior ou igual a R$ 1.518,00!");
+            return;
+        }
+
+        const body = {
+            titulo: titulo,
+            descricao: descricao,
+            valor: salario
+        };
+
+        try {
+            const response = await fetch(`/api/jobs/${empresaId}/vagas/${vagaId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                fecharModal('editVagaModal');
+                mostrarMensagem("Vaga atualizada com sucesso!", "success");
+                GetCompany();
+            } else {
+                throw new Error("Erro ao atualizar vaga");
+            }
+        } catch (error) {
+            console.error("Erro:", error);
+            mostrarMensagem("Erro ao atualizar vaga.", "error");
+        }
+    }
+
+    async function deletarVaga(idEmpresa, idVaga) {
+        if (!confirm("Tem certeza que deseja excluir esta vaga?")) return;
+
+        try {
+            const response = await fetch(`/api/jobs/${idEmpresa}/vagas/${idVaga}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 204) {
+                mostrarMensagem("Vaga excluída com sucesso!", "success");
+                setTimeout(() => {
+                    GetCompany();
+                }, 1000);
+            } else {
+                throw new Error("Erro ao deletar");
+            }
+        } catch (error) {
+            console.error("Erro:", error);
+            mostrarMensagem("Erro ao deletar vaga.", "error");
+        }
+    }
+
+    async function putUpdateCompany() {
+        const body = {
+            name: document.getElementById("empresaNome").value,
+            cnpj: document.getElementById("empresaCnpj").value,
+            email: document.getElementById("empresaEmail").value,
+            password: document.getElementById("empresaPassword").value,
+            phoneNumber: document.getElementById("empresaPhone").value,
+            address: document.getElementById("empresaAddress").value
+        };
+
+        Object.keys(body).forEach(key => {
+            if (!body[key]) delete body[key];
+        });
+
+        if (Object.keys(body).length === 0) {
+            alert("Nenhuma informação foi alterada!");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/company/update/${empresaId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                fecharModal('configModal');
+                mostrarMensagem("Informações atualizadas com sucesso!", "success");
+                GetCompany();
+            } else {
+                throw new Error("Erro ao salvar alterações");
+            }
+        } catch (error) {
+            console.error("Erro ao enviar update:", error);
+            mostrarMensagem("Erro ao atualizar informações da empresa.", "error");
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "index.html";
+    }
+
+    GetCompany();
+</script>
+
+</body>
+</html>
