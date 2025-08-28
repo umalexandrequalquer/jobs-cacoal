@@ -1,4 +1,4 @@
-# Documentação da API de Gestão de Empregos
+# Documentação da API/Monolito de Gestão de Empregos
 
 Esta API gerencia empresas e vagas de emprego, oferecendo funcionalidades para criação, atualização, exclusão e busca.
 
